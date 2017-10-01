@@ -32,7 +32,7 @@ require('../')({
 
 Build the Docker image:
 
-    $ docker-compose build TubeCast
+    $ docker-compose build tubecast
 
 Launch the Docker image:
 
