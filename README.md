@@ -41,3 +41,7 @@ Launch the Docker image:
 ## To-Do
 
     - Implement the ability to assign an optional username / password to your podcast.
+
+## Related Resources
+
+    - [youtube-dl](https://rg3.github.io/youtube-dl/)
