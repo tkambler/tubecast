@@ -48,4 +48,4 @@ Point your podcast player to the feed at:
 
 ## Related Resources
 
-    - [youtube-dl](https://rg3.github.io/youtube-dl/)
+- [youtube-dl](https://rg3.github.io/youtube-dl/)
