@@ -38,6 +38,10 @@ Launch the Docker image:
 
     $ docker-compose up -d tubecast
 
+Point your podcast player to the feed at:
+
+    http://yourhost.com:8000/rss.xml
+
 ## To-Do
 
     - Implement the ability to assign an optional username / password to your podcast.
