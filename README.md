@@ -12,7 +12,7 @@ Clone this repo, then modify `./bin/index.js` as appropriate:
 require('../')({
     'api': {
         'port': 8000,
-        'host': 'podcast.ngrok.io'
+        'host': 'yourhost.com'
     },
     'podcast': {
         'title': `John's Podcast`,
@@ -25,7 +25,9 @@ require('../')({
     'youtube': {
         'playlist': {
             'id': 'youtube-playlist-id'
-        }
+        },
+        // How often should the app check your YouTube playlist for new videos (in minutes)?
+        'update_interval': 15
     }
 });
 ```

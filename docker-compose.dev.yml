@@ -6,13 +6,13 @@ services:
     build:
       context: ./
     image: tubecast
-    restart: unless-stopped
+    restart: "no"
     ports:
       - 8000:8000
     volumes:
       - .:/opt/app
       - /opt/app/node_modules
-    entrypoint: node ./bin/index.js
+    entrypoint: nodemon run.js
     environment:
       NODE_PATH: "./lib"
-      NODE_ENV: "production"
+      NODE_ENV: "development"

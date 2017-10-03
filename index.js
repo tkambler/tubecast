@@ -16,6 +16,7 @@ module.exports = (options) => {
     return container.create('config')
         .then((config) => {
             config.use(options);
+            config.set('youtube:update_interval', config.get('youtube:update_interval') || 15);
             config.set('youtube:playlist:url', `https://www.youtube.com/playlist?list=${config.get('youtube:playlist:id')}`);
             config.set('storage', {
                 'path': path.resolve(__dirname, 'storage')

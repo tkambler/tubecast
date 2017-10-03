@@ -25,6 +25,8 @@
     "youtube-dl": "^1.12.2"
   },
   "nodemonConfig": {
-    "ignore": "./storage/*"
+    "ignore": [
+        "storage/*"
+    ]
   }
 }

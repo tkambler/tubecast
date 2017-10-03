@@ -12,7 +12,7 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
 
         constructor() {
 
-            log.info('Fetching videos.');
+            log.info(`Fetching videos. Future refreshes are configured to occur every ${config.get('youtube:update_interval')} minutes.`);
 
             this.update()
                 .tap(() => {
@@ -32,6 +32,10 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
 
         get items() {
             return this._items ? this._items : this._items = [];
+        }
+
+        get updateInterval() {
+            return config.get('youtube:update_interval') * 60 * 1000;
         }
 
         get feed() {
@@ -71,7 +75,7 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
 
                     setTimeout(() => {
                         this.update();
-                    }, 600000); // 10 minutes
+                    }, this.updateInterval);
 
                 });
 
