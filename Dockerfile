@@ -28,4 +28,4 @@ WORKDIR /opt/app
 RUN yarn
 COPY . /opt/app/
 RUN if [ -d ~/storage ]; then rm -rf storage; fi
-ENTRYPOINT node ./bin/index.js
+ENTRYPOINT node start.js -c tubecast.conf.json

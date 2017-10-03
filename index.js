@@ -4,9 +4,6 @@ const _ = require('lodash');
 
 module.exports = (options) => {
 
-    _.defaultsDeep(options, {
-    });
-
     const IoC = require('electrolyte');
     const { Container } = IoC;
     const container = new Container();
@@ -15,17 +12,34 @@ module.exports = (options) => {
 
     return container.create('config')
         .then((config) => {
-            config.use(options);
-            config.set('youtube:update_interval', config.get('youtube:update_interval') || 15);
-            config.set('youtube:playlist:url', `https://www.youtube.com/playlist?list=${config.get('youtube:playlist:id')}`);
-            config.set('storage', {
-                'path': path.resolve(__dirname, 'storage')
+
+            if (!_.get(options, 'youtube.playlist.id')) {
+                throw new Error(`youtube.playlist.id setting is required`);
+            }
+
+            _.defaultsDeep(options, {
+                'youtube': {
+                    'auto_update': {
+                        'enabled': true,
+                        'interval': 15
+                    }
+                }
             });
+
+            _.set(options, 'youtube.auto_update.interval', parseInt(_.get(options, 'youtube.auto_update.interval', 10)));
+            _.set(options, 'youtube.playlist.url', `https://www.youtube.com/playlist?list=${_.get(options, 'youtube.playlist.id')}`);
+            _.set(options, 'storage.path', path.resolve(__dirname, 'storage'));
+
+            config.use(options);
+
             return container.create('server');
+
         })
         .catch((err) => {
+
             console.log(err);
             process.exit(1);
+
         });
 
 };

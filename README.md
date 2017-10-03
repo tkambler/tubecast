@@ -1,35 +1,37 @@
 # TubeCast
 
-TubeCast makes it easy for you to create your own Podcast built around videos in a specified YouTube playlist.
+TubeCast is a daemon that makes it easy for you to create your own Podcast built around videos in a specified YouTube playlist.
 
-Configure TubeCast with the ID of a YouTube playlist (typically one that you control), then launch the app. Immediately upon launch (and every thirty minutes thereafter), the app will automatically fetch any videos contained within the specified playlist, convert them to MP3 files, and add them to your podcast's feed.
+Configure TubeCast with the ID of a YouTube playlist (typically one that you control), then launch the service. Immediately upon launch (and at a configurable interval), the service will automatically fetch any videos contained within the specified playlist, convert them to MP3 files, and add them to your podcast's feed.
 
 ## Getting Started
 
-Clone this repo, then modify `./bin/index.js` as appropriate:
+Clone this project, rename `.tubecast.conf.json` to `tubecast.conf.json`, then modify as appropriate:
 
 ```
-require('../')({
-    'api': {
-        'port': 8000,
-        'host': 'yourhost.com'
+{
+    "api": {
+        "port": 8000,
+        "host": "mydomain.com"
     },
-    'podcast': {
-        'title': `John's Podcast`,
-        'description': `This is my podcast.`,
-        'owner': {
-            'name': 'John Doe',
-            'email': 'john.doe@host.com'
+    "podcast": {
+        "title": "My Custom Podcast",
+        "description": "This is my custom podcast.",
+        "owner": {
+            "name": "Herp Derpson",
+            "email": "herp.derpson@mydomain.com"
         }
     },
-    'youtube': {
-        'playlist': {
-            'id': 'youtube-playlist-id'
+    "youtube": {
+        "playlist": {
+            "id": "ALzH37wb9mqGvTdvLaH2UnZGqoNyeEuyZjU"
         },
-        // How often should the app check your YouTube playlist for new videos (in minutes)?
-        'update_interval': 15
+        "auto_update": {
+            "enabled": false,
+            "interval": 60 // How often to perform playlist updates (in minutes)
+        }
     }
-});
+}
 ```
 
 Build the Docker image:
@@ -44,12 +46,12 @@ Launch the Docker image:
 
 Point your podcast player to the feed at:
 
-    http://yourhost.com:8000/rss.xml
+    http://mydomain.com:8000/rss.xml
 
 ## To-Do
 
-    - Determine why / fix issue wherein artwork is not being attached to individual episodes.
-    - Implement the ability to assign an optional username / password to your podcast.
+- Determine why / fix issue wherein artwork is not being attached to individual episodes.
+- Implement the ability to assign an optional username / password to your podcast.
 
 ## Related Resources
 

@@ -4,5 +4,4 @@ tmp
 /storage
 run.js
 *.log
-*.komodoproject
-.idea
+tubecast.conf.json

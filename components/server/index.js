@@ -2,6 +2,7 @@
 
 exports = module.exports = function(config, youtubeDl, log, storage) {
 
+    const Promise = require('bluebird');
     const podcast = require('podcast2');
     const moment = require('moment');
     const express = require('express');
@@ -12,7 +13,13 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
 
         constructor() {
 
-            log.info(`Fetching videos. Future refreshes are configured to occur every ${config.get('youtube:update_interval')} minutes.`);
+            log.info(`Fetching videos.`);
+
+            if (config.get('youtube:auto_update:enabled')) {
+                log.info(`Automatic playlist updates are configured to occur every ${config.get('youtube:auto_update:interval')} minutes.`);
+            } else {
+                log.info(`Automatic playlist updates have been disabled.`);
+            }
 
             this.update()
                 .tap(() => {
@@ -35,7 +42,7 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
         }
 
         get updateInterval() {
-            return config.get('youtube:update_interval') * 60 * 1000;
+            return this._updateInterval ? this._updateInterval : this._updateInterval = config.get('youtube:auto_update:interval') * 60 * 1000;
         }
 
         get feed() {
@@ -66,16 +73,31 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
 
         update() {
 
-            return this.fetchVideos()
-                .tap(() => {
-                    log.info('Generating XML feed.');
-                })
-                .then(this.generateFeed.bind(this))
-                .finally(() => {
+            return Promise.resolve()
+                .then(() => {
 
-                    setTimeout(() => {
-                        this.update();
-                    }, this.updateInterval);
+                    if (this._updating) {
+                        return;
+                    }
+
+                    this._updating = true;
+
+                    return this.fetchVideos()
+                        .tap(() => {
+                            log.info('Generating XML feed.');
+                        })
+                        .then(this.generateFeed.bind(this))
+                        .finally(() => {
+
+                            this._updating = false;
+
+                            if (config.get('youtube:auto_update:enabled')) {
+                                setTimeout(() => {
+                                    this.update();
+                                }, this.updateInterval);
+                            }
+
+                        });
 
                 });
 
@@ -185,6 +207,12 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
                             return fs.createReadStream(srcFile).pipe(res);
                         })
                         .catch(next);
+                });
+
+            this.app.route('/refresh')
+                .get((req, res, next) => {
+                    this.update();
+                    return res.send(`Refresh triggered.`);
                 });
 
             this.app.listen(config.get('api:port'), () => {

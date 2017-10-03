@@ -1,0 +1,23 @@
+{
+    "api": {
+        "port": 8000,
+        "host": "mydomain.com"
+    },
+    "podcast": {
+        "title": "My Custom Podcast",
+        "description": "This is my custom podcast.",
+        "owner": {
+            "name": "Herp Derpson",
+            "email": "herp.derpson@mydomain.com"
+        }
+    },
+    "youtube": {
+        "playlist": {
+            "id": "ALzH37wb9mqGvTdvLaH2UnZGqoNyeEuyZjU"
+        },
+        "auto_update": {
+            "enabled": false,
+            "interval": 60
+        }
+    }
+}

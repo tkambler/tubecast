@@ -12,7 +12,6 @@ services:
     volumes:
       - .:/opt/app
       - /opt/app/node_modules
-    entrypoint: node ./bin/index.js
     environment:
       NODE_PATH: "./lib"
       NODE_ENV: "production"
