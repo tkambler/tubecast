@@ -22,6 +22,14 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
 
         }
 
+        get baseUrl() {
+            if (config.get('api:port') === 80) {
+                return `http://${config.get('api:host')}`;
+            } else {
+                return `http://${config.get('api:host')}:${config.get('api:port')}`;
+            }
+        }
+
         get items() {
             return this._items ? this._items : this._items = [];
         }
@@ -34,7 +42,7 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
                 'generator': config.get('podcast:generator') || 'TubeCast',
                 'feed_url': `http://${config.get('api:host')}/rss.xml`,
                 'site_url': `http://${config.get('api:host')}`,
-                'image_url': `http://${config.get('api:host')}/logo.jpg`,
+                'image_url': `${this.baseUrl}/logo.jpg`,
                 'language': 'en',
                 'ttl': 45,
                 'date': moment().format('MMMM DD, YYYY HH:MM:SS Z'),
@@ -63,7 +71,7 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
 
                     setTimeout(() => {
                         this.update();
-                    }, 1800000); // 30 minutes
+                    }, 600000); // 10 minutes
 
                 });
 
@@ -81,16 +89,16 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
                         'description': item.meta.description,
                         'author': 'Foo Bar',
                         'date': moment(item.meta.upload_date, 'YYYYMMDD').toDate(),
-                        'url': `http://${config.get('api:host')}/media/${item.meta.id}.mp3`,
+                        'url': this.getMediaUrl(item.meta.id, 'mp3'),
                         'categories': [
                             'Other'
                         ],
                         'enclosure': {
-                            'url': `http://${config.get('api:host')}/media/${item.meta.id}.mp3`,
+                            'url': this.getMediaUrl(item.meta.id, 'mp3'),
                             'file': item.file,
                             'mime': 'audio/mpeg'
                         },
-                        'itunesImage': `http://${config.get('api:host')}/media/${item.meta.id}.jpg`
+                        'itunesImage': this.getMediaUrl(item.meta.id, 'jpg')
                     });
                 })
                 .then(() => {
@@ -103,6 +111,14 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
 
             return youtubeDl.update();
 
+        }
+
+        getMediaUrl(id, ext) {
+            if (config.get('api:port') === 80) {
+                return `http://${config.get('api:host')}/media/${id}.${ext}`;
+            } else {
+                return `http://${config.get('api:host')}:${config.get('api:port')}/media/${id}.${ext}`;
+            }
         }
 
         initApp() {
