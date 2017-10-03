@@ -44,6 +44,9 @@ exports = module.exports = function(config) {
             )
                 .then(() => {
                     return true;
+                })
+                .catch(() => {
+                    return false;
                 });
 
         }
