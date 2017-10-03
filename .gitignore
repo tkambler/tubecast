@@ -5,3 +5,4 @@ tmp
 run.js
 *.log
 *.komodoproject
+.idea

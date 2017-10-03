@@ -36,6 +36,8 @@ Build the Docker image:
 
     $ docker-compose build tubecast
 
+Optionally, replace `/logo.jpg` with a logo of your choosing.
+
 Launch the Docker image:
 
     $ docker-compose up -d tubecast
@@ -46,6 +48,7 @@ Point your podcast player to the feed at:
 
 ## To-Do
 
+    - Determine why / fix issue wherein artwork is not being attached to individual episodes.
     - Implement the ability to assign an optional username / password to your podcast.
 
 ## Related Resources
