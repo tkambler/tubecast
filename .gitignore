@@ -4,3 +4,4 @@ tmp
 /storage
 run.js
 *.log
+*.komodoproject
