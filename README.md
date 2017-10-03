@@ -47,6 +47,10 @@ Launch the Docker image:
 Point your podcast player to the feed at:
 
     http://mydomain.com:8000/rss.xml
+    
+If automatic playlist updates have been disabled, you can manually trigger an update by visiting:
+
+	http://mydomain.com:8000/refresh
 
 ## To-Do
 
