@@ -13,9 +13,11 @@ module.exports = (options) => {
     return container.create('config')
         .then((config) => {
 
-            if (!_.get(options, 'youtube.playlist.id')) {
-                throw new Error(`youtube.playlist.id setting is required`);
+            if (!_.get(options, 'youtube.playlist.ids')) {
+                throw new Error(`youtube.playlist.ids setting is required`);
             }
+
+            options.youtube.playlist.ids = _.isArray(options.youtube.playlist.ids) ? options.youtube.playlist.ids : [options.youtube.playlist.ids];
 
             _.defaultsDeep(options, {
                 'youtube': {
@@ -27,8 +29,11 @@ module.exports = (options) => {
             });
 
             _.set(options, 'youtube.auto_update.interval', parseInt(_.get(options, 'youtube.auto_update.interval', 10)));
-            _.set(options, 'youtube.playlist.url', `https://www.youtube.com/playlist?list=${_.get(options, 'youtube.playlist.id')}`);
             _.set(options, 'storage.path', path.resolve(__dirname, 'storage'));
+
+            options.youtube.playlist.urls = options.youtube.playlist.ids.map((id) => {
+                return `https://www.youtube.com/playlist?list=${id}`
+            });
 
             config.use(options);
 

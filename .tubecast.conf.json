@@ -13,7 +13,9 @@
     },
     "youtube": {
         "playlist": {
-            "id": "ALzH37wb9mqGvTdvLaH2UnZGqoNyeEuyZjU"
+            "ids": [
+                "ALzH37wb9mqGvTdvLaH2UnZGqoNyeEuyZjU"
+            ]
         },
         "auto_update": {
             "enabled": false,

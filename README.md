@@ -1,8 +1,8 @@
 # TubeCast
 
-TubeCast is a daemon that makes it easy for you to create your own Podcast built around videos in a specified YouTube playlist.
+TubeCast is a daemon that makes it easy for you to create your own Podcast built around videos in one or more specified YouTube playlists.
 
-Configure TubeCast with the ID of a YouTube playlist (typically one that you control), then launch the service. Immediately upon launch (and at a configurable interval), the service will automatically fetch any videos contained within the specified playlist, convert them to MP3 files, and add them to your podcast's feed.
+Configure TubeCast with the IDs of one or more YouTube playlists, then launch the service. Immediately upon launch (and at a configurable interval), the service will automatically fetch any videos contained within the specified playlists, convert them to MP3 files, and add them to your podcast's feed.
 
 ## Getting Started
 
@@ -24,7 +24,10 @@ Clone this project, rename `.tubecast.conf.json` to `tubecast.conf.json`, then m
     },
     "youtube": {
         "playlist": {
-            "id": "ALzH37wb9mqGvTdvLaH2UnZGqoNyeEuyZjU"
+            "ids": [
+            	"ALzH37wb9mqGvTdvLaH2UnZGqoNyeEuyZjU",
+                "PLIBtb_NuIJ1w6yO4w6l6uevneVX9qDh7_"
+            ]
         },
         "auto_update": {
             "enabled": false,
@@ -55,6 +58,7 @@ If automatic playlist updates have been disabled, you can manually trigger an up
 ## To-Do
 
 - Determine why / fix issue wherein artwork is not being attached to individual episodes.
+- Add support for pulling videos from YouTube channels.
 - Implement the ability to assign an optional username / password to your podcast.
 
 ## Related Resources

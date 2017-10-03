@@ -83,21 +83,29 @@ exports = module.exports = function(config, storage, log) {
         }
 
         fetchVideos() {
-            log.info(`Fetching playlist entries from url: ${config.get('youtube:playlist:url')}`);
-            return spawn('youtube-dl', [
-                '-j',
-                '--flat-playlist',
-                config.get('youtube:playlist:url')
-            ])
-                .then((res) => {
-                    return _.compact(s.lines(res.out))
-                        .map((row) => {
-                            return JSON.parse(row);
+            const videos = [];
+            return Promise.resolve(config.get('youtube:playlist:urls'))
+                .each((url) => {
+                    log.info(`Fetching playlist entries from url: ${url}`);
+                    return spawn('youtube-dl', [
+                        '-j',
+                        '--flat-playlist',
+                        url
+                    ])
+                        .then((res) => {
+                            return _.compact(s.lines(res.out))
+                                .map((row) => {
+                                    return JSON.parse(row);
+                                });
+                        })
+                        .then((res) => {
+                            videos.splice(videos.length, 0, ...res);
                         });
                 })
-                .tap((res) => {
-                    log.info(`Found ${res.length} playlist entries.`);
-                });
+                .then(() => {
+                    log.info(`Found ${videos.length} playlist entries.`, videos);
+                })
+                .return(videos);
         }
 
         getMeta(video) {

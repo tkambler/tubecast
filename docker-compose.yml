@@ -6,7 +6,6 @@ services:
     build:
       context: ./
     image: tubecast
-    restart: unless-stopped
     ports:
       - 8000:8000
     volumes:
