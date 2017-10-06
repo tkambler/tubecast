@@ -1,5 +1,14 @@
 FROM mhart/alpine-node:8.6.0
 
+RUN apk update
+
+# Install build tools (necessary for node-gyp)
+
+RUN apk add --no-cache --virtual .gyp \
+    python \
+    make \
+    g++
+
 # Install youtube-dl
 
 RUN set -x \
@@ -26,6 +35,8 @@ COPY package.json yarn.lock /opt/app/
 ENV node_path ./lib
 WORKDIR /opt/app
 RUN yarn
+RUN apk del .gyp
 COPY . /opt/app/
 RUN if [ -d ~/storage ]; then rm -rf storage; fi
-ENTRYPOINT node start.js -c tubecast.conf.json
+RUN rm -rf /var/cache/apk/*
+ENTRYPOINT ["node", "start.js", "-c", "tubecast.conf.json"]

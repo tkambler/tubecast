@@ -40,6 +40,16 @@ module.exports = (options) => {
             return container.create('server');
 
         })
+        .then((server) => {
+
+            process.on('SIGTERM', () => {
+                return server.shutdown()
+                    .then(() => {
+                        process.exit(0);
+                    });
+            });
+
+        })
         .catch((err) => {
 
             console.log(err);

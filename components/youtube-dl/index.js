@@ -11,6 +11,7 @@ exports = module.exports = function(config, storage, log) {
     const fs = require('../../lib/fs');
     const ytdl = require('youtube-dl');
     const download = require('download');
+    const { async, await } = require('asyncawait');
 
     return new class {
 
@@ -23,9 +24,6 @@ exports = module.exports = function(config, storage, log) {
                 .filter((video) => {
                     return storage.has(video.id)
                         .then((has) => {
-                            if (!has) {
-                                log.debug(`Video not found locally.`, video);
-                            }
                             return !has;
                         });
                 })
@@ -42,18 +40,13 @@ exports = module.exports = function(config, storage, log) {
                 })
                 .then((meta) => {
                     log.info(`Fetched video: ${video.url} / ${meta.description}`);
-                })
-                .then(() => {
-                    return this.dlThumbnail(video);
+                    return this.dlThumbnail(video, _.get(meta, 'thumbnails.0.url'));
                 });
         }
 
         dlVideo(video) {
-
             return new Promise((resolve, reject) => {
-
                 const args = ['-x', '--audio-format', 'mp3', '--embed-thumbnail', '--output', '%(id)s.%(ext)s'];
-
                 return ytdl.exec(video.url, args, {
                     'cwd': config.get('storage:path')
                 }, (err, output) => {
@@ -63,19 +56,34 @@ exports = module.exports = function(config, storage, log) {
                         return resolve();
                     }
                 });
-
             });
-
         }
 
-        dlThumbnail(video) {
+        dlThumbnail(video, url) {
+            url = url || `http://img.youtube.com/vi/${video.id}/1.jpg`;
             const dest = path.resolve(config.get('storage:path'), `${video.id}.jpg`);
-            return Promise.resolve(download(`http://img.youtube.com/vi/${video.id}/1.jpg`, dest));
+            log.debug(`Fetching video thumbnail`, {
+                'url': url,
+                'dest': dest,
+                'video': video
+            });
+            return Promise.resolve(download(url))
+                .then((data) => {
+                    return fs.writeFileAsync(dest, data);
+                });
         }
 
         dlMeta(video) {
             const destFile = path.resolve(config.get('storage:path'), `${video.id}.json`);
-            return this.getMeta(video)
+            return new Promise((resolve, reject) => {
+                ytdl.getInfo(video.url, [], function(err, info) {
+                    if (err) {
+                        return reject(err);
+                    } else {
+                        return resolve(info);
+                    }
+                });
+            })
                 .then((meta) => {
                     return fs.writeJsonAsync(destFile, meta)
                         .return(meta);
@@ -106,29 +114,6 @@ exports = module.exports = function(config, storage, log) {
                     log.info(`Found ${videos.length} playlist entries.`, videos);
                 })
                 .return(videos);
-        }
-
-        getMeta(video) {
-            return new Promise((resolve, reject) => {
-                ytdl.getInfo(video.url, [], function(err, info) {
-                    if (err) {
-                        return reject(err);
-                    } else {
-                        return resolve(info);
-                    }
-                });
-            });
-        }
-
-        getVideoInfo(videoId) {
-            const url = `https://www.youtube.com/watch?v=${videoId}`;
-            return spawn('youtube-dl', [
-                '--dump-json',
-                url
-            ])
-                .then((res) => {
-                    return JSON.parse(res.out);
-                });
         }
 
     };

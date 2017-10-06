@@ -71,6 +71,10 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
 
         }
 
+        shutdown() {
+            return this.server.closeAsync();
+        }
+
         update() {
 
             return Promise.resolve()
@@ -134,9 +138,7 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
         }
 
         fetchVideos() {
-
             return youtubeDl.update();
-
         }
 
         getMediaUrl(id, ext) {
@@ -215,9 +217,18 @@ exports = module.exports = function(config, youtubeDl, log, storage) {
                     return res.send(`Refresh triggered.`);
                 });
 
-            this.app.listen(config.get('api:port'), () => {
+            this.server = this.app.listen(config.get('api:port'), () => {
                 log.info(`Server is listening on port: ${config.get('api:port')}`);
             });
+
+            this.server.closeAsync = () => {
+                log.info(`Shutting down API.`);
+                return new Promise((resolve, reject) => {
+                    return this.server.close((err) => {
+                        return err ? reject(err) : resolve();
+                    });
+                });
+            };
 
         }
 
